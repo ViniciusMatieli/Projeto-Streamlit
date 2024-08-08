@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import webbrowser
 
 # Configurações da página
 st.set_page_config(page_title='FIFA 23', page_icon='⚽')
@@ -11,7 +12,7 @@ file_url = 'https://drive.google.com/uc?export=download&id=16v09jfNGHXkKs7o4MItk
 def load_data():
     try:
         # Ler o CSV diretamente do link
-        df = pd.read_csv(file_url)
+        df = pd.read_csv(file_url, index_col=0, delimiter=',')
         return df
     except pd.errors.ParserError as e:
         st.error(f"Erro ao ler o CSV: {e}")
@@ -26,8 +27,6 @@ if 'data' not in st.session_state:
     if not df.empty:
         df = df.sort_values(by='Overall', ascending=False)
         st.session_state['data'] = df
-    else:
-        st.session_state['data'] = pd.DataFrame()
 
 st.title('Análise do FIFA 23 ⚽🎮')
 
@@ -37,8 +36,7 @@ st.sidebar.markdown('Desenvolvido por [Vinicius Mattielli](https://facebook.com/
 
 btn = st.button('Acessar a base de dados')
 if btn:
-    st.markdown('[Clique aqui para acessar a base de dados no Kaggle](https://www.kaggle.com/datasets/bryanb/fifa-player-stats-database)')
-
+    webbrowser.open_new_tab('https://www.kaggle.com/datasets/bryanb/fifa-player-stats-database')
 st.markdown(
     """
 O FIFA 23, desenvolvido pela EA Sports, marca um marco significativo na série de jogos de futebol, sendo o último título da franquia antes da mudança para o novo nome, EA Sports FC. Lançado em setembro de 2022, o jogo oferece uma série de melhorias e inovações, tanto no campo gráfico quanto na jogabilidade. A introdução do HyperMotion2, uma evolução do sistema HyperMotion presente em FIFA 22, proporciona uma experiência de jogo mais realista, com movimentos de jogadores e dinâmicas de jogo mais autênticos. Além disso, o FIFA 23 destaca-se por seu aprimorado modo Career, que inclui novas opções de personalização e maior profundidade tática.
@@ -49,8 +47,3 @@ Além dessas melhorias, o FIFA 23 mantém sua tradicional base de dados atualiza
     """
 )
 
-# Exibir dados se disponíveis
-if not st.session_state['data'].empty:
-    st.write(st.session_state['data'])
-else:
-    st.warning('Não foi possível carregar os dados.')
