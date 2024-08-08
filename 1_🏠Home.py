@@ -1,40 +1,56 @@
 import streamlit as st
 import pandas as pd
-import webbrowser
-from datetime import datetime
 
-#lendo os dados para df
-st.set_page_config(page_title='FIFA 23',page_icon='⚽')
+# Configurações da página
+st.set_page_config(page_title='FIFA 23', page_icon='⚽')
 
-file_url  = 'https://drive.google.com/file/d/16v09jfNGHXkKs7o4MItkQ5e_jhzCjvuU/view?usp=sharing'
+# URL direta para download do CSV
+file_url = 'https://drive.google.com/uc?export=download&id=16v09jfNGHXkKs7o4MItkQ5e_jhzCjvuU'
 
-@st.cache
+@st.cache_data
 def load_data():
-    return pd.read_csv(file_url,delimiter=',', index_col=0)
+    try:
+        # Ler o CSV diretamente do link
+        df = pd.read_csv(file_url)
+        return df
+    except pd.errors.ParserError as e:
+        st.error(f"Erro ao ler o CSV: {e}")
+        return pd.DataFrame()  # Retorna um DataFrame vazio em caso de erro
+    except Exception as e:
+        st.error(f"Erro inesperado: {e}")
+        return pd.DataFrame()  # Retorna um DataFrame vazio em caso de erro
 
+# Carregar dados, se não estiver presente na sessão
 if 'data' not in st.session_state:
     df = load_data()
-    df = df.sort_values(by='Overall', ascending=False)
-    st.session_state['data'] = df
+    if not df.empty:
+        df = df.sort_values(by='Overall', ascending=False)
+        st.session_state['data'] = df
+    else:
+        st.session_state['data'] = pd.DataFrame()
 
-st.title('Analise do FIFA 23 ⚽🎮')
+st.title('Análise do FIFA 23 ⚽🎮')
 
 st.write('Base de dados do Kaggle')
-#assinatura do desenvolvidor 
+# Link para a base de dados
 st.sidebar.markdown('Desenvolvido por [Vinicius Mattielli](https://facebook.com/viniciusmatieli)')
 
 btn = st.button('Acessar a base de dados')
 if btn:
-    webbrowser.open_new_tab('https://www.kaggle.com/datasets/bryanb/fifa-player-stats-database')
+    st.markdown('[Clique aqui para acessar a base de dados no Kaggle](https://www.kaggle.com/datasets/bryanb/fifa-player-stats-database)')
 
 st.markdown(
     """
-
 O FIFA 23, desenvolvido pela EA Sports, marca um marco significativo na série de jogos de futebol, sendo o último título da franquia antes da mudança para o novo nome, EA Sports FC. Lançado em setembro de 2022, o jogo oferece uma série de melhorias e inovações, tanto no campo gráfico quanto na jogabilidade. A introdução do HyperMotion2, uma evolução do sistema HyperMotion presente em FIFA 22, proporciona uma experiência de jogo mais realista, com movimentos de jogadores e dinâmicas de jogo mais autênticos. Além disso, o FIFA 23 destaca-se por seu aprimorado modo Career, que inclui novas opções de personalização e maior profundidade tática.
 
 O modo Ultimate Team, um dos mais populares da série, também recebeu atualizações significativas, com novos eventos e um sistema de química reformulado que visa oferecer mais flexibilidade na construção de equipes. A inclusão das ligas femininas pela primeira vez, com a possibilidade de jogar com times de futebol feminino, representa uma grande inovação e um passo importante para a inclusão e diversidade no jogo.
 
 Além dessas melhorias, o FIFA 23 mantém sua tradicional base de dados atualizada, oferecendo uma ampla gama de equipes e jogadores licenciados. No entanto, como em qualquer título anual, o jogo também enfrenta críticas relacionadas à sua abordagem incremental em comparação com edições anteriores. No geral, o FIFA 23 oferece uma experiência de futebol enriquecida e detalhada, mantendo o padrão de qualidade da série e preparando o terreno para a transição para o novo título da EA Sports.
-
-"""
+    """
 )
+
+# Exibir dados se disponíveis
+if not st.session_state['data'].empty:
+    st.write(st.session_state['data'])
+else:
+    st.warning('Não foi possível carregar os dados.')
