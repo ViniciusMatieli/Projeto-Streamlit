@@ -6,18 +6,16 @@ from datetime import datetime
 #lendo os dados para df
 st.set_page_config(page_title='FIFA 23',page_icon='⚽')
 
-#Base de dados
-import pandas as pd
-from datetime import datetime
-import streamlit as st
+file_url  = 'https://drive.google.com/file/d/16v09jfNGHXkKs7o4MItkQ5e_jhzCjvuU/view?usp=sharing'
+
+@st.cache
+def load_data():
+    return pd.read_csv(file_url,delimiter=',', index_col=0)
 
 if 'data' not in st.session_state:
-    df = pd.read_csv('datasets\FIFA23.csv', delimiter=',', index_col=0)
+    df = load_data()
     df = df.sort_values(by='Overall', ascending=False)
     st.session_state['data'] = df
-
-
-
 
 st.title('Analise do FIFA 23 ⚽🎮')
 
