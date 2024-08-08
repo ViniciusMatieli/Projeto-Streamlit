@@ -2,26 +2,23 @@ import streamlit as st
 import pandas as pd
 import webbrowser
 
-# Configurações da página
 st.set_page_config(page_title='FIFA 23', page_icon='⚽')
 
-# URL direta para download do CSV
 file_url = 'https://drive.google.com/uc?export=download&id=16v09jfNGHXkKs7o4MItkQ5e_jhzCjvuU'
 
 @st.cache_data
 def load_data():
     try:
-        # Ler o CSV diretamente do link
         df = pd.read_csv(file_url, index_col=0, delimiter=',')
         return df
     except pd.errors.ParserError as e:
         st.error(f"Erro ao ler o CSV: {e}")
-        return pd.DataFrame()  # Retorna um DataFrame vazio em caso de erro
+        return pd.DataFrame()  #DataFrame vazio em caso de erro
     except Exception as e:
         st.error(f"Erro inesperado: {e}")
-        return pd.DataFrame()  # Retorna um DataFrame vazio em caso de erro
+        return pd.DataFrame()  #DataFrame vazio em caso de erro
 
-# Carregar dados, se não estiver presente na sessão
+#Carregar dados, se não estiver presente na sessão
 if 'data' not in st.session_state:
     df = load_data()
     if not df.empty:
@@ -31,7 +28,6 @@ if 'data' not in st.session_state:
 st.title('Análise do FIFA 23 ⚽🎮')
 
 st.write('Base de dados do Kaggle')
-# Link para a base de dados
 st.sidebar.markdown('Desenvolvido por [Vinicius Mattielli](https://facebook.com/viniciusmatieli)')
 
 btn = st.button('Acessar a base de dados')
@@ -46,4 +42,3 @@ O modo Ultimate Team, um dos mais populares da série, também recebeu atualiza�
 Além dessas melhorias, o FIFA 23 mantém sua tradicional base de dados atualizada, oferecendo uma ampla gama de equipes e jogadores licenciados. No entanto, como em qualquer título anual, o jogo também enfrenta críticas relacionadas à sua abordagem incremental em comparação com edições anteriores. No geral, o FIFA 23 oferece uma experiência de futebol enriquecida e detalhada, mantendo o padrão de qualidade da série e preparando o terreno para a transição para o novo título da EA Sports.
     """
 )
-
